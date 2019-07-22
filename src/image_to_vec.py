@@ -11,13 +11,13 @@ from PIL import Image
 Image.MAX_IMAGE_PIXELS = 1000000000
 seed(0)
 NUMBER_OF_ARTISTS = 10
-NUMBER_OF_SAMPLE_IMAGES = 100
+NUMBER_OF_SAMPLE_IMAGES = 300
 
 
-def image_to_vec(image, hx=32, hy=32):
+def image_to_vec(image, hx=128, hy=128):
     img = load_img(image, target_size=(hx, hy))
     return img_to_array(img) / 255
- 
+
 
 if __name__ == "__main__":
     X_list, y_list = [], []
