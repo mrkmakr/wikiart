@@ -1,7 +1,7 @@
 from keras.models import Sequential
 from keras.layers.convolutional import Conv2D
 from keras.layers.pooling import MaxPool2D
-from keras.optimizers import Adam
+from keras.optimizers import SGD
 from keras.layers.core import Dense, Activation, Dropout, Flatten
 from keras.utils import np_utils
 from keras.callbacks import EarlyStopping
@@ -18,6 +18,12 @@ def CNN(hx=128, hy=128):
     model.add(Conv2D(64, 3))
     model.add(Activation('relu'))
     model.add(MaxPool2D(pool_size=(2, 2)))
+    model.add(Conv2D(32, 3))
+    model.add(Activation('relu'))
+    model.add(MaxPool2D(pool_size=(2, 2)))
+    model.add(Conv2D(16, 3))
+    model.add(Activation('relu'))
+    model.add(MaxPool2D(pool_size=(2, 2)))
     model.add(Flatten())
     model.add(Dense(1024))
     model.add(Activation('relu'))
@@ -25,7 +31,7 @@ def CNN(hx=128, hy=128):
 
     model.add(Dense(NUMBER_OF_CLASSES, activation='softmax'))
 
-    adam = Adam(lr=1e-5)
+    adam = SGD(lr=1e-2, decay=1e-4, momentum=0.9, nesterov=True)
 
     model.compile(optimizer=adam, loss='categorical_crossentropy', metrics=["accuracy"])
     return model
@@ -35,9 +41,10 @@ if __name__ == "__main__":
     X, y = np.load('../train/X.npy'), np.load('../train/y.npy')
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=0, stratify=y)
 
+    X_train, X_valid, y_train, y_valid = train_test_split(X_train, y_train, test_size=0.1, random_state=0, stratify=y_train)
     Y_train = np_utils.to_categorical(y_train, NUMBER_OF_CLASSES)
     Y_test = np_utils.to_categorical(y_test, NUMBER_OF_CLASSES)
-
+    Y_valid = np_utils.to_categorical(y_valid, NUMBER_OF_CLASSES)
     model = CNN()
     history = model.fit(
             X_train,
@@ -45,7 +52,7 @@ if __name__ == "__main__":
             batch_size=64,
             nb_epoch=100,
             verbose=1,
-            validation_split=0.1,
+            validation_data=(X_valid, Y_valid),
             callbacks=[EarlyStopping(patience=5, verbose=1)])
 
     #モデルの表示
@@ -54,7 +61,7 @@ if __name__ == "__main__":
     #評価
     score = model.evaluate(X_test, Y_test, verbose=0)
     print('Test loss:',score[0])
-    print('Test accuracy:',score[1])
+    print('Test accuracy:', score[1])
 
     json_string = model.to_json()
     with open('../cnn.json', "w") as f:
