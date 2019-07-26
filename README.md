@@ -17,3 +17,4 @@ Test accuracy: 0.468
 
 ## pretrained CNNを用いて抽出した特徴量の可視化
 ![UMAP](https://github.com/mrkmakr/wikiart/blob/master/src/res18/2d.jpg "UMAP")
+同じ色の点は同じアーティストの作品を表している．　色が黒（紫）の点が古いアーティストで，明るくなるにつれ新しいアーティスト
