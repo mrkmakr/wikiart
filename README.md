@@ -13,3 +13,7 @@
 Test loss: 1.833
 Test accuracy: 0.468
 2019/7/23
+
+
+## pretrained CNNを用いて抽出した特徴量の可視化
+![UMAP](https://github.com/mrkmakr/wikiart/blob/master/src/res18/2d.jpg "UMAP")
